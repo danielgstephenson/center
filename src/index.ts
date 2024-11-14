@@ -1,1 +1,3 @@
-console.log('Hello Server')
+import { Game } from './game'
+
+void new Game()
