@@ -4,19 +4,19 @@ import { Wall } from '../features/wall'
 import { Vec2 } from 'planck'
 
 export class Arena extends Actor {
-  static hx = 35
-  static hy = 30
-  static safeX = 25
-  static criticalRadius = 5
-  static indicatorRadius = 12
-  static outerRadius = 20
+  static hx = 10
+  static hy = 10
+  static safeX = 10
+  static criticalRadius = 3
+  static indicatorRadius = 7
+  static outerRadius = 7
   northWall: Wall
   southWall: Wall
   eastWall: Wall
   westWall: Wall
 
   constructor (game: Game) {
-    super(game, 'arena', {
+    super(game, {
       type: 'static',
       bullet: true,
       linearDamping: 0,

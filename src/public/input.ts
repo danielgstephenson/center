@@ -1,14 +1,17 @@
 import { Vec2 } from 'planck'
 import { Renderer } from './renderer'
+import { Socket } from 'socket.io-client'
 
 export class Input {
   keyboard = new Map<string, boolean>()
   mousePosition = Vec2(0, 0)
   mouseButtons = new Map<number, boolean>()
   renderer: Renderer
+  socket: Socket
 
-  constructor (renderer: Renderer) {
+  constructor (renderer: Renderer, socket: Socket) {
     this.renderer = renderer
+    this.socket = socket
     window.onkeydown = (event: KeyboardEvent) => this.onkeydown(event)
     window.onkeyup = (event: KeyboardEvent) => this.onkeyup(event)
     window.onwheel = (event: WheelEvent) => this.onwheel(event)
@@ -34,19 +37,22 @@ export class Input {
   }
 
   onwheel (event: WheelEvent): void {
-    this.renderer.camera.adjustZoom(-0.01 * event.deltaY)
-    console.log('zoom', this.renderer.camera.zoom)
+    // this.renderer.camera.adjustZoom(-0.01 * event.deltaY)
+    // console.log('zoom', this.renderer.camera.zoom)
   }
 
   onmousemove (event: MouseEvent): void {
-    this.mousePosition.x = event.clientX - 0.5 * window.innerWidth
-    this.mousePosition.y = 0.5 * window.innerHeight - event.clientY
+    const scale = this.renderer.mainCanvas.width * this.renderer.camera.scale
+    this.mousePosition.x = (event.clientX - 0.5 * window.innerWidth) / scale
+    this.mousePosition.y = (0.5 * window.innerHeight - event.clientY) / scale
   }
 
   onmousedown (event: MouseEvent): void {
     this.mouseButtons.set(event.button, true)
-    this.mousePosition.x = event.clientX - 0.5 * window.innerWidth
-    this.mousePosition.y = 0.5 * window.innerHeight - event.clientY
+    const scale = this.renderer.mainCanvas.width * this.renderer.camera.scale
+    this.mousePosition.x = (event.clientX - 0.5 * window.innerWidth) / scale
+    this.mousePosition.y = (0.5 * window.innerHeight - event.clientY) / scale
+    this.socket.emit('mouseDown', this.mousePosition)
   }
 
   onmouseup (event: MouseEvent): void {
@@ -54,14 +60,17 @@ export class Input {
   }
 
   ontouchmove (event: TouchEvent): void {
-    this.mousePosition.x = event.touches[0].clientX - 0.5 * window.innerWidth
-    this.mousePosition.y = 0.5 * window.innerHeight - event.touches[0].clientY
+    const scale = this.renderer.mainCanvas.width * this.renderer.camera.scale
+    this.mousePosition.x = (event.touches[0].clientX - 0.5 * window.innerWidth) / scale
+    this.mousePosition.y = (0.5 * window.innerHeight - event.touches[0].clientY) / scale
   }
 
   ontouchstart (event: TouchEvent): void {
     this.mouseButtons.set(0, true)
-    this.mousePosition.x = event.touches[0].clientX - 0.5 * window.innerWidth
-    this.mousePosition.y = 0.5 * window.innerHeight - event.touches[0].clientY
+    const scale = this.renderer.mainCanvas.width * this.renderer.camera.scale
+    this.mousePosition.x = (event.touches[0].clientX - 0.5 * window.innerWidth) / scale
+    this.mousePosition.y = (0.5 * window.innerHeight - event.touches[0].clientY) / scale
+    this.socket.emit('mouseDown', this.mousePosition)
   }
 
   ontouchend (event: TouchEvent): void {

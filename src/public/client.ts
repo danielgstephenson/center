@@ -6,7 +6,7 @@ import { InputSummary } from '../summaries/inputSummary'
 
 const socket = io()
 const renderer = new Renderer()
-const input = new Input(renderer)
+const input = new Input(renderer, socket)
 
 let inputSummary: InputSummary = new InputSummary(input)
 

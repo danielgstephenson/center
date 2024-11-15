@@ -20,7 +20,6 @@ export class Runner {
     this.game.scoreDiff = this.game.score2 - this.game.score1
     if (Math.abs(this.game.scoreDiff) < 1) {
       this.game.preStep()
-      this.game.bots.forEach(bot => bot.preStep(dt))
       this.game.fighters.forEach(fighter => fighter.preStep())
       this.game.world.step(dt * this.game.config.timeScale)
       this.game.fighters.forEach(fighter => fighter.postStep())
@@ -36,9 +35,6 @@ export class Runner {
     this.game.score1 = 0
     this.game.score2 = 0
     this.game.waited = 0
-    this.game.fighters.forEach(fighter => { fighter.team = 0 })
-    this.game.players.forEach(player => player.joinTeam())
-    this.game.bots.forEach(fighter => fighter.joinTeam())
     this.game.fighters.forEach(fighter => fighter.respawn())
   }
 

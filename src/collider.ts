@@ -1,8 +1,8 @@
-import { Contact, WorldManifold } from 'planck'
+import { Contact } from 'planck'
 import { Game } from './game'
 import { Feature } from './features/feature'
 import { Torso } from './features/torso'
-import { Arena } from './actors/arena'
+import { Blade } from './features/blade'
 
 export class Collider {
   game: Game
@@ -14,23 +14,19 @@ export class Collider {
   }
 
   preSolve (contact: Contact): void {
-    const a = contact.getFixtureA().getUserData() as Feature
-    const b = contact.getFixtureB().getUserData() as Feature
-    const features = [a, b]
-    const featureLabels = features.map(feature => feature.label)
-    const worldManifold = contact.getWorldManifold(null)
-    if (!(worldManifold instanceof WorldManifold)) return
-    if (featureLabels.includes('blade') && featureLabels.includes('torso')) {
-      contact.setEnabled(false)
-      features.forEach(feature => {
-        if (feature instanceof Torso) {
-          const unsafe = worldManifold.points[0].x * feature.fighter.spawnSign < Arena.safeX
-          if (unsafe) {
-            setTimeout(() => { feature.alive = false }, 100)
-          }
+    const feature0 = contact.getFixtureA().getUserData() as Feature
+    const feature1 = contact.getFixtureB().getUserData() as Feature
+    const pairs = [[feature0, feature1], [feature1, feature0]]
+    pairs.forEach(features => {
+      const a = features[0]
+      const b = features[1]
+      if (a instanceof Blade && b instanceof Torso) {
+        contact.setEnabled(false)
+        if (a.weapon.team !== b.fighter.team) {
+          setTimeout(() => { b.alive = false }, 100)
         }
-      })
-    }
+      }
+    })
   }
 
   beginContact (contact: Contact): void {}

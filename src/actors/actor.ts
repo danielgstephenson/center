@@ -9,16 +9,13 @@ export class Actor {
   label = ''
   removed = false
 
-  constructor (game: Game, id: string, bodyDef: BodyDef) {
-    if (game.actors.has(id)) {
-      throw new Error(`Actor id ${id} is already in use.`)
-    } else {
-      this.game = game
-      this.id = id
-      this.body = this.game.world.createBody(bodyDef)
-      this.body.setUserData(this)
-      this.game.actors.set(this.id, this)
-    }
+  constructor (game: Game, bodyDef: BodyDef) {
+    Actor.count += 1
+    this.id = Actor.count.toString()
+    this.game = game
+    this.body = this.game.world.createBody(bodyDef)
+    this.body.setUserData(this)
+    this.game.actors.set(this.id, this)
   }
 
   getFixtures (): Fixture[] {
